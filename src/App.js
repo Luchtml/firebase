@@ -1,5 +1,5 @@
 import React from 'react';
-import { db } from './firebaseConnection';
+import { db, auth } from './firebaseConnection';
 import './app.css';
 import {
   doc,
@@ -13,11 +13,16 @@ import {
   onSnapshot,
 } from 'firebase/firestore';
 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 const App = () => {
   const [titulo, setTitulo] = React.useState('');
   const [autor, setAutor] = React.useState('');
   const [idPost, setIdPost] = React.useState('');
   const [posts, setPosts] = React.useState([]);
+
+  const [email, setEmail] = React.useState('');
+  const [senha, setSenha] = React.useState('');
 
   React.useEffect(() => {
     async function loadPosts() {
@@ -122,10 +127,53 @@ const App = () => {
       });
   }
 
+  async function novoUsuario() {
+    await createUserWithEmailAndPassword(auth, email, senha)
+      .then(() => {
+        console.log('cadastrado com sucesso');
+        setEmail('');
+        setSenha('');
+      })
+      .catch((error) => {
+        if (error.code === 'auth/weak-password') {
+          alert('senha fraca');
+        } else if (error.code === 'auth/email-already-in-use') {
+          alert('Email já existe');
+        }
+      });
+  }
+
   return (
     <div>
       <h1>React Js + Firebase 😃 </h1>
+
       <div className="container">
+        <h2>Usuários: </h2>
+        <label>Email:</label>
+        <input
+          value={email}
+          placeholder="Email para login"
+          onChange={({ target }) => {
+            setEmail(target.value);
+          }}
+        />
+        <label>Senha:</label>
+        <input
+          value={senha}
+          placeholder="Senha para login"
+          onChange={({ target }) => {
+            setSenha(target.value);
+          }}
+        />
+        <button onClick={novoUsuario}>Cadastrar</button>
+      </div>
+
+      <br />
+      <br />
+      <hr />
+
+      <div className="container">
+        <h2>Posts:</h2>
         <label>ID do Post:</label>
         <input
           type="text"
