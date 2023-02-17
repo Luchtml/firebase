@@ -54,6 +54,11 @@
   height: 90px;
   resize: none;
   border-radius: 4px;
+  padding: 8px;
+}
+
+.form textarea:focus{
+  outline-color: #3399ff;
 }
 
 .links {
