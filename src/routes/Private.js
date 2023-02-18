@@ -12,7 +12,7 @@ export default function Private({ children }) {
       const unsub = onAuthStateChanged(auth, (user) => {
         if (user) {
           const userData = {
-            uid: user.id,
+            uid: user.uid,
             email: user.email,
           };
           localStorage.setItem('@detailUser', JSON.stringify(userData));
