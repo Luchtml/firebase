@@ -44,7 +44,9 @@ const Register = () => {
           }}
         />
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit" style={{ backgroundColor: '#ff3366' }}>
+          Cadastrar
+        </button>
       </form>
 
       <Link className="links" to="/">

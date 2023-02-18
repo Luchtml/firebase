@@ -10,12 +10,14 @@ import {
   where,
   doc,
   deleteDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 const Admin = () => {
   const [tarefaInput, setTarefaInput] = React.useState('');
   const [user, setUser] = React.useState({});
   const [tarefas, setTarefas] = React.useState([]);
+  const [edit, setEdit] = React.useState({});
 
   React.useEffect(() => {
     async function loadTarefas() {
@@ -58,6 +60,11 @@ const Admin = () => {
       return;
     }
 
+    if (edit?.id) {
+      handleUpdateTarefa();
+      return;
+    }
+
     await addDoc(collection(db, 'tarefas'), {
       tarefa: tarefaInput,
       created: new Date(),
@@ -82,7 +89,25 @@ const Admin = () => {
   }
 
   function editTarefa(item) {
-    console.log(item);
+    setTarefaInput(item.tarefa);
+    setEdit(item);
+  }
+
+  async function handleUpdateTarefa() {
+    const docRef = doc(db, 'tarefas', edit?.id);
+    await updateDoc(docRef, {
+      tarefa: tarefaInput,
+    })
+      .then(() => {
+        console.log('tarefa atualizada');
+        setTarefaInput('');
+        setEdit({});
+      })
+      .catch(() => {
+        console.log('erro ao atualizar');
+        setTarefaInput('');
+        setEdit({});
+      });
   }
 
   return (
@@ -98,9 +123,19 @@ const Admin = () => {
           }}
         />
 
-        <button className="btn-register" type="submit">
-          Registrar tarefa
-        </button>
+        {Object.keys(edit).length > 0 ? (
+          <button
+            className="btn-register"
+            style={{ backgroundColor: '#ff3366' }}
+            type="submit"
+          >
+            Atualizar tarefa
+          </button>
+        ) : (
+          <button className="btn-register" type="submit">
+            Registrar tarefa
+          </button>
+        )}
       </form>
 
       {tarefas.map((item) => (
